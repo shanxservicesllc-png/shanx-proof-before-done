@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1627">
+  <meta name="description" content="Offline evidence checker for AI completion claims. Check one criterion and export a faithful receipt.">
+  <title>Proof Before Done | Evidence before acceptance</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="src/checker.js" defer></script>
+  <script src="src/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar wrap">
+    <a class="brand" href="index.html" aria-label="Proof Before Done, home"><span class="brand-icon" aria-hidden="true">P<span class="brand-dot">·</span></span><span>PROOF<span class="brand-secondary"> BEFORE DONE</span></span></a>
+    <span class="offline-pill"><span class="alive-dot" aria-hidden="true"></span> LOCAL ONLY · OFFLINE READY</span>
+  </header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="pageTitle">
+      <div class="eyebrow">EVIDENCE AUDIT / VERSION 1.0</div>
+      <h1 id="pageTitle">Claims are easy.<br><span>Proof takes a check.</span></h1>
+      <p>An AI says the work is finished. Verify one specific fact about the actual file, then export an honest receipt. No guessing. No blanket approval.</p>
+      <div class="trust-strip"><span>01 <strong>CLAIMED</strong></span><span class="arrow">→</span><span>02 <strong>CHECKED</strong></span><span class="arrow">→</span><span>03 <strong>REVIEW REQUIRED</strong></span></div>
+    </section>
+    <div class="workspace">
+      <section class="panel inputs" aria-labelledby="setupTitle">
+        <div class="panel-heading"><div><span class="section-kicker">CONTROL DESK</span><h2 id="setupTitle">Set the evidence check</h2></div><span class="panel-number">01 / 02</span></div>
+        <div class="form-stack">
+          <div class="field"><label for="claim"><span class="step">1</span> What did the AI worker claim?</label><textarea id="claim" rows="3" maxlength="2000" placeholder="Example: I completed the release notes and saved the final file."></textarea><span class="hint">This is a statement to investigate, not proof.</span></div>
+          <div class="field"><label for="evidenceFile"><span class="step">2</span> Select the actual evidence file</label><div class="file-picker"><input id="evidenceFile" type="file" aria-describedby="fileHint"><div class="file-picker-copy"><strong>Choose a file from this device</strong><span id="fileHint">Nothing leaves this browser. One selected file only.</span></div></div></div>
+          <div class="field"><label for="checkType"><span class="step">3</span> Which measurable fact should be checked?</label><select id="checkType"><option value="contains">File includes specific text</option><option value="filename">Filename matches exactly</option></select></div>
+          <div class="field"><label id="expectedLabel" for="expected">Text that must appear in the file</label><input id="expected" type="text" maxlength="1000" placeholder="DELIVERABLE READY" aria-describedby="inlineHelp"><span class="hint" id="inlineHelp">Exact, case-sensitive text. UTF-8 .txt, .md, .csv, .json or .log; up to 2 MiB.</span></div>
+        </div>
+        <div class="actions"><button id="runCheck" class="primary" type="button">RUN EVIDENCE CHECK</button><button id="resetForm" class="secondary" type="button">Clear</button></div>
+        <p class="privacy">🔒 File reading and receipt generation happen on this device. No account, upload or internet connection is required.</p>
+      </section>
+      <section class="panel output" aria-labelledby="resultsTitle">
+        <div class="panel-heading"><div><span class="section-kicker">RESULTS LEDGER</span><h2 id="resultsTitle">What was actually proven?</h2></div><span class="panel-number">02 / 02</span></div>
+        <div class="result-hero" id="result" data-state="idle" role="status" aria-live="polite"><span class="result-prelabel">NAMED CRITERION</span><h3 id="resultTitle">No check run</h3><p id="resultDesc">Choose a file and an exact criterion to inspect one observable fact.</p></div>
+        <div class="fact-list">
+          <div class="fact"><span class="fact-label">WORKER STATEMENT</span><strong id="claimValue">UNVERIFIED</strong></div>
+          <div class="fact"><span class="fact-label">NAMED CHECK</span><strong id="criterionValue">NOT CHECKED</strong></div>
+          <div class="fact"><span class="fact-label">OBSERVED</span><strong id="observedValue">No observed result</strong></div>
+          <div class="fact"><span class="fact-label">SELECTED EVIDENCE</span><strong id="fileValue">No file inspected</strong></div>
+          <div class="fact hash"><span class="fact-label">SHA-256 FINGERPRINT</span><strong id="fingerprintValue">NOT CHECKED</strong></div>
+        </div>
+        <div class="review-banner"><span>OVERALL JOB ACCEPTANCE</span><strong id="reviewValue">REVIEW REQUIRED</strong><small>The human reviewer decides if the entire job is complete.</small></div>
+        <div class="exports"><span class="section-kicker">EXPORT EVIDENCE RECEIPT</span><div class="export-buttons"><button id="exportJson" class="secondary" type="button" disabled>↓ JSON receipt</button><button id="exportMarkdown" class="secondary" type="button" disabled>↓ Markdown receipt</button></div></div>
+      </section>
+    </div>
+    <section class="notes" aria-label="What this proves and does not prove"><div><span class="note-label">IN SCOPE</span><h2>One file. One criterion.</h2><p>Checks the exact filename or the presence of a specified text snippet. Creates an inspectable receipt with the observed result.</p></div><div><span class="note-label">OUT OF SCOPE</span><h2>No magic completion stamp.</h2><p>This app cannot certify code quality, project completeness, truthfulness, execution results or any unchecked files.</p></div><div><span class="note-label">NEXT DECISION</span><h2>Human acceptance.</h2><p>A passing check is still only one piece of evidence. Review the rest of the work before accepting it.</p></div></section>
+  </main>
+  <footer class="wrap footer"><span>PROOF BEFORE DONE / LOCAL EVIDENCE CHECKER</span><span>Built for precise claims, not inflated certainty.</span></footer>
+</body>
+</html>

@@ -1,0 +1,30 @@
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
+const { webcrypto, createHash } = require('node:crypto');
+const { verifyFile, toMarkdown, MAX_HASH_BYTES, MAX_TEXT_BYTES } = require('../src/checker.js');
+const base = join(__dirname, '..', 'fixtures');
+const fakeFile = (name, bytes, type = 'text/plain') => ({ name, size: bytes.length, type, lastModified: Date.UTC(2026,9,23), async arrayBuffer() { return Uint8Array.from(bytes).buffer; } });
+const fileFixture = name => fakeFile(name, readFileSync(join(base, name)));
+const verify = (file, checkType = 'contains', expected = 'DELIVERABLE READY', extra = {}) => verifyFile({claim:'The requested output is finished.', file, checkType, expected, cryptoImpl:webcrypto, timestamp:'2026-10-23T20:00:00Z', ...extra});
+
+test('No selected file fails closed', async () => { const r = await verify(null); assert.equal(r.summary.check_state, 'NOT VERIFIED'); assert.equal(r.summary.overall, 'REVIEW REQUIRED'); assert.equal(r.criterion.passed, null); });
+test('Wrong content fails named check', async () => { const r = await verify(fileFixture('wrong-deliverable.txt')); assert.equal(r.summary.check_state, 'FAILED'); assert.equal(r.criterion.observed,'Required text absent'); });
+test('Correct content passes only named check', async () => { const r = await verify(fileFixture('correct-deliverable.txt')); assert.equal(r.summary.check_state,'CHECK PASSED'); assert.equal(r.summary.overall,'REVIEW REQUIRED'); assert.equal(r.human_review.decision,'PENDING'); });
+test('Exported Markdown faithfully records pass and review', async () => { const r = await verify(fileFixture('correct-deliverable.txt')); const md=toMarkdown(r); assert.match(md,/CHECK PASSED/); assert.match(md,/REVIEW REQUIRED/); assert.match(md,/DELIVERABLE READY/); assert.match(md,/SHA-256/); });
+test('Hash is stable for identical bytes', async () => { const a=await verify(fileFixture('correct-deliverable.txt')); const b=await verify(fileFixture('correct-deliverable.txt')); assert.equal(a.fingerprint.status,'CHECKED'); assert.equal(a.fingerprint.value,b.fingerprint.value); assert.equal(a.fingerprint.value,createHash('sha256').update(readFileSync(join(base,'correct-deliverable.txt'))).digest('hex')); });
+test('Different contents produce different fingerprints', async () => { const a=await verify(fileFixture('correct-deliverable.txt')); const b=await verify(fileFixture('wrong-deliverable.txt')); assert.notEqual(a.fingerprint.value,b.fingerprint.value); });
+test('Missing claim is not claimed or checked', async () => { const r=await verify(fileFixture('correct-deliverable.txt'),'contains','DELIVERABLE READY',{claim:'   '});assert.equal(r.summary.claim_state,'UNVERIFIED');assert.equal(r.summary.check_state,'NOT VERIFIED'); });
+test('Blank expected criterion is not checked', async () => { const r=await verify(fileFixture('correct-deliverable.txt'),'contains','  '); assert.equal(r.summary.check_state,'NOT VERIFIED'); });
+test('Filename match is exact and case sensitive', async () => { const f=fileFixture('correct-deliverable.txt');assert.equal((await verify(f,'filename','correct-deliverable.txt')).summary.check_state,'CHECK PASSED');assert.equal((await verify(f,'filename','Correct-deliverable.txt')).summary.check_state,'FAILED'); });
+test('Unsupported check not verified', async () => { const r=await verify(fileFixture('correct-deliverable.txt'),'execute','anything');assert.equal(r.summary.check_state,'NOT VERIFIED'); });
+test('HTML file refused for text check', async () => { const r=await verify(fileFixture('unsupported.html'),'contains','script');assert.equal(r.summary.check_state,'NOT VERIFIED');assert.match(r.criterion.explanation,/supports only/); });
+test('HTML/script-shaped content stays text and is detected literally', async () => { const r=await verify(fileFixture('unsafe-shaped-text.txt'),'contains','<script>');assert.equal(r.summary.check_state,'CHECK PASSED');assert.equal(r.criterion.observed,'Required text present'); });
+test('Invalid UTF-8 text not checked', async () => { const r=await verify(fakeFile('broken.txt',Buffer.from([0xc3,0x28])));assert.equal(r.summary.check_state,'NOT VERIFIED'); });
+test('Hash not invented when browser crypto unavailable', async () => { const r=await verify(fileFixture('correct-deliverable.txt'),'contains','DELIVERABLE READY',{cryptoImpl:null});assert.equal(r.summary.check_state,'CHECK PASSED');assert.equal(r.fingerprint.status,'NOT CHECKED');assert.equal(r.fingerprint.value,null); });
+test('Hash size limit fails honestly', async () => { const f=fakeFile('big.txt',Buffer.alloc(MAX_HASH_BYTES+1,97)); const r=await verify(f,'filename','big.txt');assert.equal(r.summary.check_state,'CHECK PASSED');assert.equal(r.fingerprint.status,'NOT CHECKED'); });
+test('Text size limit fails without parsing', async () => { const f=fakeFile('big.txt',Buffer.alloc(MAX_TEXT_BYTES+1,97));const r=await verify(f);assert.equal(r.summary.check_state,'NOT VERIFIED'); });
+test('Can safely export no-file receipt', async () => { const r=await verify(null);const md=toMarkdown(r);assert.match(md,/No evidence file was selected/);assert.match(md,/NOT VERIFIED/); });
+
+test('Markdown receipts escape raw HTML from input', async () => { const r=await verify(fileFixture('correct-deliverable.txt'),'filename','correct-deliverable.txt',{claim:'<script>alert(1)</script>'});const md=toMarkdown(r);assert.doesNotMatch(md, /<script>/);assert.match(md, /&lt;script&gt;/); });

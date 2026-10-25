@@ -1,0 +1,42 @@
+{
+  "receipt_version": "1.0",
+  "application": "Proof Before Done",
+  "checked_at": "2026-10-24T01:48:57.575Z",
+  "summary": {
+    "claim_state": "CLAIMED",
+    "check_state": "CHECK PASSED",
+    "overall": "REVIEW REQUIRED"
+  },
+  "claim": "Release notes are finished.",
+  "file": {
+    "name": "correct-deliverable.txt",
+    "size_bytes": 128,
+    "mime_type": "text/plain",
+    "last_modified": "2026-10-24T01:46:35.800Z"
+  },
+  "criterion": {
+    "type": "contains",
+    "name": "Exact UTF-8 text substring",
+    "expected": "DELIVERABLE READY",
+    "observed": "Required text present",
+    "passed": true,
+    "explanation": "The required exact, case-sensitive text occurs in the selected UTF-8 file."
+  },
+  "fingerprint": {
+    "algorithm": "SHA-256",
+    "status": "NOT CHECKED",
+    "value": null,
+    "reason": "SHA-256 is not supported in this browser context."
+  },
+  "limitations": [
+    "Only one user-selected local file and one named criterion were checked.",
+    "A passing criterion does not establish the truth of the completion claim or overall project completeness.",
+    "No code was executed, no network requests were made, and no unrelated files were searched.",
+    "A human reviewer must decide whether the whole deliverable is acceptable."
+  ],
+  "human_review": {
+    "required": true,
+    "decision": "PENDING",
+    "reviewer": "Owner or designated human reviewer"
+  }
+}

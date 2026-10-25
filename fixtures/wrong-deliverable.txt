@@ -1,0 +1,3 @@
+Proof Before Done sample release note.
+DRAFT INCOMPLETE
+Synthetic fixture only; expected success marker is absent.

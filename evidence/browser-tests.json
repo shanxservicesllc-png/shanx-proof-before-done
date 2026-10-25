@@ -1,0 +1,65 @@
+{
+  "generated_utc": "2026-10-24T01:48:58.454180+00:00",
+  "method": "Chromium Playwright; about:blank in-memory page; offline context",
+  "navigation_limitation": "file:// and localhost navigation blocked by administrator; not tested",
+  "results": [
+    {
+      "name": "No file fails closed",
+      "result": "PASS"
+    },
+    {
+      "name": "No file never implies completion",
+      "result": "PASS"
+    },
+    {
+      "name": "Wrong text reports FAILED",
+      "result": "PASS"
+    },
+    {
+      "name": "Correct text reports check passed",
+      "result": "PASS"
+    },
+    {
+      "name": "Passed criterion does not approve job",
+      "result": "PASS"
+    },
+    {
+      "name": "JSON receipt downloads and reopens offline, matching UI",
+      "result": "PASS"
+    },
+    {
+      "name": "Markdown receipt downloads and reopens offline",
+      "result": "PASS"
+    },
+    {
+      "name": "Changing input invalidates old receipt",
+      "result": "PASS"
+    },
+    {
+      "name": "Unsupported HTML file fails closed",
+      "result": "PASS"
+    },
+    {
+      "name": "Exact filename match passes",
+      "result": "PASS"
+    },
+    {
+      "name": "Filename case mismatch fails",
+      "result": "PASS"
+    },
+    {
+      "name": "Script-shaped content treated as inert text",
+      "result": "PASS"
+    },
+    {
+      "name": "Clear resets all inputs and receipts",
+      "result": "PASS"
+    },
+    {
+      "name": "Reinitialize app fully offline without dependencies",
+      "result": "PASS"
+    }
+  ],
+  "passed": 14,
+  "total": 14
+}

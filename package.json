@@ -1,0 +1,11 @@
+{
+  "name": "proof-before-done",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline evidence checking proof-of-concept",
+  "scripts": {
+    "test": "node --test tests/checker.test.cjs"
+  },
+  "engines": { "node": ">=18" },
+  "license": "MIT"
+}

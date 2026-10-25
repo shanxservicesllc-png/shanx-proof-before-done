@@ -1,0 +1,4 @@
+Proof Before Done sample release note.
+DELIVERABLE READY
+Version: 1.0
+Synthetic fixture only; contains no private project data.
